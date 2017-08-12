@@ -38,7 +38,7 @@ class PlaystoreScrapper():
             review_text = review.find_element_by_css_selector(".with-review-wrapper")
 
             review_data = [review_date.text, star_rating, review_text.text]
-            page_reviews.append(x.encode("utf-8") for x in review_data)
+            page_reviews.append([x.encode("utf-8") for x in review_data])
         return page_reviews
 
     def to_csv(self):
@@ -52,8 +52,11 @@ class PlaystoreScrapper():
             next_button = self.get_next_button()
 
             for i in range(self.no_of_pages):
-                next_button.click()
-                reviews = self.browser.find_elements_by_css_selector(".single-review")
-                reviews_data = self.get_reviews_data(self.filter_reviews(reviews))
-                for data in reviews_data:
-                    writer.writerows(data)
+                try:
+                    next_button.click()
+                    reviews = self.browser.find_elements_by_css_selector(".single-review")
+                    reviews_data = self.get_reviews_data(self.filter_reviews(reviews))
+                    for data in reviews_data:
+                        writer.writerows([data])
+                except:
+                    continue

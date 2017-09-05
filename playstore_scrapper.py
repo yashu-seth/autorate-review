@@ -1,3 +1,6 @@
+from __future__ import print_function
+
+import time
 import csv
 
 from selenium import webdriver
@@ -43,20 +46,32 @@ class PlaystoreScrapper():
 
     def to_csv(self):
 
+        print("yolo??")
         self.browser.get(self.url)
-        with open("{app_name}_reviews.csv".format(app_name=self.app_name), "w+") as file:
+
+        print("yolo")
+        with open(" {app_name}_reviews.csv".format(app_name=self.app_name), "w+") as file:
             writer = csv.writer(file)
             column_headers = ["Date", "Rating", "Text"]
             writer.writerows([column_headers])
 
             next_button = self.get_next_button()
+            print("writing data to csv .....")
+
+            def write():
+                next_button.click()
+                reviews = self.browser.find_elements_by_css_selector(".single-review")
+                reviews_data = self.get_reviews_data(self.filter_reviews(reviews))
+                
+                print(".", end="")
+
+                for data in reviews_data:
+                    writer.writerows([data])
 
             for i in range(self.no_of_pages):
                 try:
-                    next_button.click()
-                    reviews = self.browser.find_elements_by_css_selector(".single-review")
-                    reviews_data = self.get_reviews_data(self.filter_reviews(reviews))
-                    for data in reviews_data:
-                        writer.writerows([data])
+                    write()
                 except:
-                    continue
+                    print("#", end="")
+                    time.sleep(2)
+                    write()

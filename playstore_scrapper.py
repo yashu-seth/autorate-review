@@ -36,23 +36,23 @@ class PlaystoreScrapper():
     def get_reviews_data(self, reviews):
         page_reviews = []
         for review in reviews:
-            review_date = review.find_element_by_css_selector(".review-date")
+            # no need of date for the project
+            # review_date = review.find_element_by_css_selector(".review-date")
             star_rating = review.find_element_by_css_selector(".star-rating-non-editable-container").get_attribute("aria-label")
             review_text = review.find_element_by_css_selector(".with-review-wrapper")
 
-            review_data = [review_date.text, star_rating, review_text.text]
+            review_data = [review_text.text, star_rating]
             page_reviews.append([x.encode("utf-8") for x in review_data])
         return page_reviews
 
     def to_csv(self):
 
-        print("yolo??")
         self.browser.get(self.url)
 
         print("yolo")
         with open(" {app_name}_reviews.csv".format(app_name=self.app_name), "w+") as file:
             writer = csv.writer(file)
-            column_headers = ["Date", "Rating", "Text"]
+            column_headers = ["Text", "Rating"]
             writer.writerows([column_headers])
 
             next_button = self.get_next_button()
@@ -73,5 +73,5 @@ class PlaystoreScrapper():
                     write()
                 except:
                     print("#", end="")
-                    time.sleep(2)
+                    time.sleep(5)
                     write()
